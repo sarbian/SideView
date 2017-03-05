@@ -41,6 +41,9 @@ namespace SideView
         public int displayHeight = 0;
         [Persistent]
         public int displayHz = 60;
+        [Persistent]
+        public bool debug = true;
+        
         private bool isInit = false;
 
         private GameObject focus;
@@ -86,6 +89,9 @@ namespace SideView
                 ConfigNode.LoadObjectFromConfig(this, config);
             }
 
+            if (debug)
+                gameObject.AddComponent<SideViewDebug>();
+
             GameEvents.onLevelWasLoadedGUIReady.Add(LevelWasLoaded);
 
             Camera.onPreCull += onPreCull;
@@ -100,16 +106,7 @@ namespace SideView
             config.Save(IOUtils.GetFilePathFor(this.GetType(), "config.cfg"));
         }
 
-        // In a magical world where Unity actually works as documented this should work.
-        // In the real work it does not and always report z = 0...
-        // However it does work in Unity 5.5...
-        //void OnGUI()
-        //{
-        //    var mousePos = Display.RelativeMouseAt(Input.mousePosition);
-        //    GUI.Label(new Rect(10, 70, 300, 20), "mouse position:" + (Vector2) Input.mousePosition);
-        //    GUI.Label(new Rect(10, 90, 300, 20), "mouse position:" + (Vector2) mousePos);
-        //    GUI.Label(new Rect(10, 110, 300, 20), "display id:" + mousePos.z);
-        //}
+        
 
         private void Init()
         {
@@ -522,14 +519,17 @@ namespace SideView
         }
     }
 
-
-
-
-
-
-
-
-
-
-
+    public class SideViewDebug : MonoBehaviour
+    {
+        // In a magical world where Unity actually works as documented this should work.
+        // In the real work it does not and always report z = 0...
+        // However it does work in Unity 5.5...
+        void OnGUI()
+        {
+            var mousePos = Display.RelativeMouseAt(Input.mousePosition);
+            GUI.Label(new Rect(10, 70, 300, 20), "mouse position:" + (Vector2) Input.mousePosition);
+            GUI.Label(new Rect(10, 90, 300, 20), "mouse position:" + (Vector2) mousePos);
+            GUI.Label(new Rect(10, 110, 300, 20), "display id:" + mousePos.z);
+        }
+    }
 }
